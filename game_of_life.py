@@ -1,6 +1,7 @@
 from random import *
 import turtle
 from turtle import *
+from copy import *
 
 def create_array(size):
 #this function returns a sizexsize matrix as a two-dimensional array 
@@ -45,7 +46,7 @@ def draw_death(square_size):
 def draw(grid):
 
     size = len(grid)
-    square_size = 40
+    square_size = 15
     for i in range (size):
 
         for j in range (size):
@@ -53,12 +54,12 @@ def draw(grid):
             row = j // size
             col = j % size
 
-            cell_state = grid[row][col]
-            index = row*size + col
+            cell_state = grid[i+row][col]
 
-            position(i*square_size, j*square_size)
-            if cell_state == 1: draw_alive(index)
-            else: draw_death(index)
+            position(j*square_size, -i*square_size)
+            if cell_state == 1: draw_alive(square_size)
+            else: draw_death(square_size)
+            position(-j*square_size, i*square_size)
 
 
 def get_neighbour(grid, index):
@@ -84,15 +85,13 @@ def get_neighbour(grid, index):
     return neighbours
 
 
-def decide_next(grid, cell_index, cell_status):
+def decide_next(neighbours, cell_index, cell_status, grid):
 #this function determines if a 0 cell has 3 live neighbours inorder to make it alive
 #this function determines if a cell 1 has less than 2 live cells or greater than three live cells to make it die
 
     size = len(grid)
-    new_grid = grid
 
     alive_neighbours = 0
-    neighbours = get_neighbour(grid, cell_index)
 
     for value in neighbours:
     #we determine the amount of alive neighbours of the 0
@@ -101,20 +100,24 @@ def decide_next(grid, cell_index, cell_status):
 
     if cell_status == 0:
         if alive_neighbours == 3:
-            new_grid[cell_index//size][cell_index%size] = 1 
+            grid[cell_index//size][cell_index%size] = 1 
 
     elif cell_status == 1:
         if alive_neighbours < 2 or alive_neighbours > 3:
-            new_grid[cell_index//size][cell_index%size] = 0
+            grid[cell_index//size][cell_index%size] = 0
 
-    return new_grid
+    return grid
 
 
-def decide(old_grid):
+def decide(grid):
 #this function goes through the grid and inspects if a cell will be set alive or death
 
-    #old_grid = grid
-    size = len(old_grid)
+    """ We need to store the value of the grid in such a way that it is not
+        modified by new_grid coming from decicde_next function but edits 
+        are done on the new grid from time to time"""
+    size = len(grid)
+
+    old_grid = deepcopy(grid)
     
     for i in range (size):
 
@@ -122,9 +125,11 @@ def decide(old_grid):
             row = j // size
             col = j % size
 
-            cell_state = old_grid[row][col]
-            
-            new_grid = decide_next(old_grid, (row*size) + col, cell_state)
+            cell_index= ((i+row)*size) + col
+            cell_state = grid[i+row][col]
+
+            neighbours = get_neighbour(old_grid, cell_index)
+            new_grid = decide_next(neighbours, cell_index, cell_state, grid)
 
     draw(new_grid)
 
@@ -133,7 +138,7 @@ def decide(old_grid):
 
 def init():
 
-    turtle.delay(20)
+    turtle.delay(5)
     grid = create_array(3)
 
     while True:
@@ -141,4 +146,4 @@ def init():
 
     #turtle.exitonclick()
 
-#init()
+init()
