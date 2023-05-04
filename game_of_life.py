@@ -1,3 +1,4 @@
+import sys
 from random import *
 import turtle
 from turtle import *
@@ -39,14 +40,14 @@ def draw_alive(square_size):
 
 
 def draw_death(square_size):
+    pu()
     for _ in range(4):
         fd(square_size); lt(90)
+    pd()
 
-
-def draw(grid):
+def draw(grid, square_size):
 
     size = len(grid)
-    square_size = 15
     for i in range (size):
 
         for j in range (size):
@@ -109,7 +110,7 @@ def decide_next(neighbours, cell_index, cell_status, grid):
     return grid
 
 
-def decide(grid):
+def decide(grid, square_size):
 #this function goes through the grid and inspects if a cell will be set alive or death
 
     """ We need to store the value of the grid in such a way that it is not
@@ -131,18 +132,48 @@ def decide(grid):
             neighbours = get_neighbour(old_grid, cell_index)
             new_grid = decide_next(neighbours, cell_index, cell_state, grid)
 
-    draw(new_grid)
+    draw(new_grid, square_size)
 
     return new_grid
 
 
 def init():
 
-    turtle.delay(5)
-    grid = create_array(3)
+    def get_inputs():
+        try:
+            array_size = int(input('Selct dimension: '))
+            square_size = int(input('Enter square size: '))
+            return [array_size, square_size]
+        except:
+            get_inputs() 
+
+    if len(sys.argv) == 3:
+        try:
+            array_size = int(sys.argv[1])                            #ces arguments vont etre utilisés pour se connecter à l'API
+            square_size = int(sys.argv[2])                            
+
+        except:
+            information = get_inputs()
+            array_size = information[0]
+            square_size = information[1]
+
+    else: 
+          information = get_inputs()
+          array_size = information[0]
+          square_size = information[1]
+
+    width = height = (array_size*square_size)*2
+    screen = Screen()
+    width > 600 and screen.setup(width, height)
+
+    turtle.delay(0)
+    turtle.hideturtle()
+    #pu();turtle.setposition(-width,100);pd()
+    grid = create_array(array_size)
 
     while True:
-        grid = decide(grid)
+        grid = decide(grid, square_size)
+        turtle.clear()
 
     #turtle.exitonclick()
 
