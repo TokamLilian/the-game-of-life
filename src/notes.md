@@ -5,6 +5,8 @@
     Contains cells with are either on/off, alive/dead
 
 ## Rules;
+```0 (3 live neighbours) → 1```
+```1 (<2 live neighbours or >3 live neighbours) → 0```
 
 ### Death/alive
         If a cell has no alive neighbour, it dies
