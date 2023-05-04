@@ -29,6 +29,17 @@ def position(x, y):
     pu(); fd(x); lt(90); fd(y); rt(90); pd()
 
 
+def draw_box(size, square_size):
+    
+    position(0, square_size)
+    rt(90)
+    for _ in range(4):
+        fd(size); lt(90)
+    lt(90)
+    #goto(-turtle.window_width()/2, (turtle.window_height()/2)-square_size)
+    position(0, -square_size)
+
+
 def draw_alive(square_size):
     turtle.color("blue")
     turtle.begin_fill()
@@ -39,15 +50,13 @@ def draw_alive(square_size):
     turtle.color("black")
 
 
-def draw_death(square_size):
-    pu()
-    for _ in range(4):
-        fd(square_size); lt(90)
-    pd()
-
 def draw(grid, square_size):
+    pu();goto(-turtle.window_width()/2, turtle.window_height()/2);pd()
 
     size = len(grid)
+    width = size*square_size
+    pu();draw_box(width, square_size);pd() ##
+
     for i in range (size):
 
         for j in range (size):
@@ -57,10 +66,10 @@ def draw(grid, square_size):
 
             cell_state = grid[i+row][col]
 
-            position(j*square_size, -i*square_size)
-            if cell_state == 1: draw_alive(square_size)
-            else: draw_death(square_size)
-            position(-j*square_size, i*square_size)
+            if cell_state == 1: 
+                position(j*square_size, -i*square_size)
+                draw_alive(square_size)
+                position(-j*square_size, i*square_size)
 
 
 def get_neighbour(grid, index):
@@ -136,12 +145,18 @@ def decide(grid, square_size):
 
     return new_grid
 
+def update_grid(i, j):
+#to update the grid and proceed to next verification
+    print('x', i, 'and y', j) ##
+    grid = []
+    return grid
+
 
 def init():
 
     def get_inputs():
         try:
-            array_size = int(input('Selct dimension: '))
+            array_size = int(input('Select dimension: '))
             square_size = int(input('Enter square size: '))
             return [array_size, square_size]
         except:
@@ -162,19 +177,26 @@ def init():
           array_size = information[0]
           square_size = information[1]
 
-    width = height = (array_size*square_size)*2
-    screen = Screen()
-    width > 600 and screen.setup(width, height)
+    screen = turtle.Screen()
+    screen.setup(width = 0.9, height = 0.9)
+    canvas = screen.getcanvas() 
+    root = canvas.winfo_toplevel()
+    root.overrideredirect(0)
 
     turtle.delay(0)
     turtle.hideturtle()
-    #pu();turtle.setposition(-width,100);pd()
     grid = create_array(array_size)
-
+    
     while True:
         grid = decide(grid, square_size)
+        turtle.onscreenclick(update_grid, 1)
+        turtle.listen()
         turtle.clear()
 
-    #turtle.exitonclick()
-
 init()
+
+def take_click():
+    draw_box(100)
+    turtle.onscreenclick(update_grid, 1)
+    turtle.listen()
+    turtle.done()
