@@ -40,8 +40,11 @@ def setup_screen(size, square_size, gap):
     turtle.delay(0)
     turtle.hideturtle()
 
-    pu(); goto(-turtle.window_width()/2, turtle.window_height()/2); pd()
-    #pu();draw_box(width, square_size, gap);pd() ##
+    lx = -turtle.window_width()/2                          #the lower boundary of x on the canvas
+    uy = turtle.window_height()/2                          #the upper boundary of y on the canvas
+    
+    pu(); goto(lx, uy); pd()
+    return [lx , uy]
 
 
 def draw_box(width, square_size, gap):
@@ -84,8 +87,6 @@ def draw(grid, square_size, size, gap):
                 draw_cell(square_size, "blue")
             else: draw_cell(square_size, "white")
             position(-j*square_size, i*square_size)
-
-    #position(-gap/2, gap/2)                         #to place the turtle at the original position on the grid for the next executiion
 
 
 def get_neighbour(grid, index):
@@ -159,28 +160,29 @@ def decide(grid, square_size, size, gap):
     return new_grid
 
 
-def update_grid(x, y, grid, size, square_size):
+def update_grid(x, y, grid, size, square_size, lx, uy):
 #to update the grid and proceed to next verification
+    
+    length = size * square_size
+    uy += square_size                                            #we add square size because after being at that point, the turtle draws a cell upward
+    ly = uy - length
+    if x <= length + lx and x >= lx :                            #ensure that we are within the boundaries of the grid
+        if ly <= y and y <= uy:
 
-    # -576 <= x <= (size*sqaure_size) - 576
-    # 380 - (size*square_size) <= y <= 285
-    lx = -576                           #the lower boundary of x on the canvas
-    uy = 285                            #the upper boundary of y on the canvas
+            x = abs(lx - x)
+            y = abs(ly - y)
 
-    x = abs(lx - x)
-    y = abs(y - uy)
+            x_pos = int(x//square_size)         #to know position of the cell
+            y_pos = int(y//square_size)
 
-    x_pos = int(x//square_size)         #to know position of the cell
-    y_pos = int(y//square_size)
+            i = size - 1 - y_pos                #to get the index of the cell's value in the grid
+            j = x_pos
 
-    i = size - 1 - y_pos                #to get the index of the cell's value in the grid
-    j = x_pos
+            #print('x position', x_pos, 'and y position', y_pos)
+            #square = grid[i][j]
+            #print('The square is', square)
 
-    #print('x position', x_pos, 'and y position', y_pos)
-    #square = grid[i][j]
-    #print('The square is', square)
-
-    grid[i][j] = 1                      #change the clicked cell to alive
+            grid[i][j] = 1                      #change the clicked cell to alive
     
 
 def init():
@@ -217,11 +219,11 @@ def init():
     #elif gap == 1: gap = 5      #take an arbitray value
     gap = 10
     
-    setup_screen(size, square_size, gap)
+    boundaries = setup_screen(size, square_size, gap)
 
     while True:
         grid = decide(grid, square_size, size, gap)
-        turtle.onscreenclick(lambda x, y: update_grid(x, y, grid, size, square_size))
+        turtle.onscreenclick(lambda x, y: update_grid(x, y, grid, size, square_size, boundaries[0], boundaries[1]))
         turtle.listen()
         #turtle.clear()
 
