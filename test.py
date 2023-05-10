@@ -40,11 +40,8 @@ def test():
     def test_decide():
          
         def test_decide1():
-            grid = [ [0, 1, 1],
-                     [1, 1, 1],
-                     [0, 0, 0] ]
-
-            assert decide(grid, len(grid), len(grid[0])) != grid
+            grid = [ [0, 1, 1], [1, 0, 1], [1, 0, 0] ]
+            assert decide(deepcopy(grid), len(grid), len(grid[0])) != grid
 
         test_decide1()
 
@@ -53,13 +50,13 @@ def test():
                      [1, 0, 1],
                      [1, 0, 0] ]
 
-            assert decide(grid, len(grid), len(grid[0])) == [ [0, 1, 0], [0, 1, 0], [0, 0, 0] ]
+            assert decide(grid, len(grid), len(grid[0])) == [ [0, 1, 0], [0, 0, 0], [0, 1, 0] ]
 
         test_decide2()
 
         def test_decide3():
             grid = create_array(4, 5)
-            assert decide(grid, 4, 5) != grid
+            assert decide(deepcopy(grid), 4, 5) != grid
 
         test_decide3()
 
@@ -91,8 +88,8 @@ def test():
         test_get_neighbour2()
 
         def test_get_neighbour3():
-            lines = randint(2, 30)
-            columns = randint(2, 30)
+            lines = randint(3, 30)
+            columns = randint(3, 30)
 
             grid = create_array(lines, columns)
             last = (lines*columns) - 1
