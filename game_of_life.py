@@ -34,6 +34,7 @@ def setup_screen():
     canvas = screen.getcanvas() 
     root = canvas.winfo_toplevel()
     root.overrideredirect(0)
+    screen.bgcolor("black")
 
     turtle.delay(0)
     turtle.hideturtle()
@@ -45,18 +46,6 @@ def setup_screen():
     return [lx , uy]
 
 
-def draw_box(width, square_size, gap):
-#this function draws a box in which the game takes place        
-    position(0, square_size)
-    rt(90)
-    for _ in range(4):
-        #fd(width); lt(90)
-        fd(width + gap); lt(90)
-    lt(90)
-    #position(0, -square_size)
-    position(gap/2, -square_size-(gap/2))
-
-
 def draw_cell(square_size, colour):
 #this function draws an alive cell
     turtle.color(colour)
@@ -65,7 +54,6 @@ def draw_cell(square_size, colour):
         fd(square_size); lt(90)
     
     turtle.end_fill()
-    turtle.color("black")
 
 
 def draw(grid, square_size, lines, columns, gap):
@@ -82,8 +70,8 @@ def draw(grid, square_size, lines, columns, gap):
 
             position(j*square_size, -i*square_size)
             if cell_state == 1: 
-                draw_cell(square_size, "blue")
-            else: draw_cell(square_size, "white")
+                draw_cell(square_size, "green")
+            else: draw_cell(square_size, "black")
             position(-j*square_size, i*square_size)
 
 
@@ -131,7 +119,7 @@ def decide_next(neighbours, cell_index, cell_status, grid, size):
     return grid
 
 
-def decide(grid, square_size, lines, columns, gap):
+def decide(grid, lines, columns):
 #this function goes through the grid and inspects if a cell will be set alive or death
 
     """ We need to store the value of the grid in such a way that it is not
@@ -150,8 +138,6 @@ def decide(grid, square_size, lines, columns, gap):
 
             neighbours = get_neighbour(old_grid, cell_index, lines, columns)
             new_grid = decide_next(neighbours, cell_index, cell_state, grid, columns)
-
-    draw(new_grid, square_size, lines, columns, gap)
 
     return new_grid
 
@@ -237,8 +223,9 @@ def init():
     boundaries = setup_screen()
 
     while True:
-        grid = decide(grid, square_size, lines, columns, gap)
+        grid = decide(grid, lines, columns)
         turtle.onscreenclick(lambda x, y: update_grid(x, y, grid, lines, columns, square_size, boundaries[0], boundaries[1]))
         turtle.listen()
+        draw(grid, square_size, lines, columns, gap)
 
 init()
