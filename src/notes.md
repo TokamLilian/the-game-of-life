@@ -10,7 +10,7 @@
 
 ### Death/alive
         If a cell has no alive neighbour, it dies
-        If a cell has only on alive neighbour, it dies
+        If a cell has only one alive neighbour, it dies
         But if it has two alive neighbours, it remains alive
         Any live cell with more than three live neighbours dies, as if by overpopulation
 
