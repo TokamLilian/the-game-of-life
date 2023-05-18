@@ -29,6 +29,7 @@ def position(x, y):
 
 
 def setup_screen():
+   #this function sets the screen canvas and returns the turtle position
     screen = turtle.Screen()
     screen.setup(width = 0.9, height = 0.9)
     canvas = screen.getcanvas() 
